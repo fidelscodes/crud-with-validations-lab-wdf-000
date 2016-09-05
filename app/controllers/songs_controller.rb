@@ -1,7 +1,12 @@
 class SongsController < ApplicationController
+  before_action :set_song!, only: [:show, :edit, :update]
 
   def index
     @songs = Song.all
+  end
+
+  def new
+    @song = Song.new
   end
 
   def create
@@ -14,19 +19,29 @@ class SongsController < ApplicationController
   end
 
   def show
-    @song = set_song
+    @song
   end
 
   def edit
-    @song = set_song
+    @song
+  end
+
+  def update
+    # Calling .valid? after the update returns false. Why?
+    if @song.update(song_params(:title, :artist_name, :released, :release_year, :genre))
+      redirect_to song_path(@song)
+    else
+      render :edit
+    end
+
   end
 
 
 
   private
 
-  def set_song
-    Song.find(params[:id])
+  def set_song!
+    @song = Song.find(params[:id])
   end
 
   def song_params(*args)
